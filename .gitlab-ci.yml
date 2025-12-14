@@ -10,6 +10,8 @@ build-job:
 
 test-job:
   stage: test
+  variables:
+    DOCKER_API_VERSION: "1.42"
   script:
     - docker run --rm my-backend-image pytest -s -v
 
