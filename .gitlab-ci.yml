@@ -15,6 +15,7 @@ test-job:
   script:
     - docker run --rm my-backend-image pytest -s -v
 
+
 deploy-job:
   stage: deploy
   script:
