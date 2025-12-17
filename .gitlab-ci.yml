@@ -1,8 +1,8 @@
-# workflow:
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == "web"
-#       when: always
-#     - when: never  
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: always
+    - when: never  
 
 
 stages:
@@ -28,7 +28,7 @@ metadata-job:
     reports:
       dotenv: $DOTENV_FILE
   script:
-    - echo "IMAGE_TAG=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> $DOTENV_FILE
+    - echo -e "IMAGE_TAG=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA\n" >> $DOTENV_FILE
 
 
 
