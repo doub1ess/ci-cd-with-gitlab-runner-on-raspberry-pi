@@ -4,25 +4,46 @@ workflow:
       when: always
     - when: never  
 
+
 stages:
   - build
   - test
   - deploy
 
+
+variables:
+  DOTENV_FILE: file.env
+
+
 build-job:
   stage: build
   script:
-    - docker build -t my-backend-image .
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+
+
+metadata-job:
+  stage: build
+  needs: [build-job]
+  artifacts:
+    reports:
+      dotenv: $DOTENV_FILE
+  script:
+    - echo "IMAGE_TAG=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> $DOTENV_FILE
+
+
 
 test-job:
   stage: test
+  needs: [metadata-job]
   variables:
     DOCKER_API_VERSION: "1.42"
   script:
-    - docker run --rm my-backend-image pytest -s -v
+    - docker run --rm $IMAGE_TAG pytest -s -v
+
 
 
 deploy-job:
   stage: deploy
+  needs: [test-job]
   script:
     - docker compose up -d
