@@ -44,6 +44,6 @@ test-job:
 
 deploy-job:
   stage: deploy
-  needs: [test-job]
+  needs: [metadata-job, test-job]
   script:
     - docker compose up -d
