@@ -36,8 +36,14 @@ scan-job:
     name: aquasec/trivy:0.65.0
     entrypoint: [""]
   needs: [metadata-job]
+  cache:
+    key: trivy-cache
+    paths:
+      - .trivy-cache/
+  variables:
+    TRIVY_CACHE_DIR: .trivy-cache
   script:
-    - trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --format json -o trivy-image.json $IMAGE_TAG
+    - trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --scanners vuln --cache-dir $TRIVY_CACHE_DIR --timeout 10m --format json -o trivy-image.json $IMAGE_TAG
   artifacts:
     when: always
     paths:
