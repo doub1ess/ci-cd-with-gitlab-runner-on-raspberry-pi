@@ -1,8 +1,8 @@
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web"
-      when: always
-    - when: never  
+# workflow:
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "web"
+#       when: always
+#     - when: never  
 
 
 stages:
@@ -30,6 +30,18 @@ metadata-job:
   script:
     - echo -e "IMAGE_TAG=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA\n" >> $DOTENV_FILE
 
+scan-job:
+  stage: test
+  image:
+    name: aquasec/trivy:0.65.0
+    entrypoint: [""]
+  needs: [metadata-job]
+  script:
+    - trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --format json -o trivy-image.json $IMAGE_TAG
+  artifacts:
+    when: always
+    paths:
+      - trivy-image.json
 
 
 test-job:
