@@ -43,7 +43,7 @@ scan-job:
   variables:
     TRIVY_CACHE_DIR: .trivy-cache
   script:
-    - trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --scanners vuln --cache-dir $TRIVY_CACHE_DIR --timeout 10m --format json -o trivy-image.json $IMAGE_TAG
+    - trivy image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --scanners vuln --cache-dir $TRIVY_CACHE_DIR --parallel 1 --timeout 20m --format json -o trivy-image.json $IMAGE_TAG
   artifacts:
     when: always
     paths:
