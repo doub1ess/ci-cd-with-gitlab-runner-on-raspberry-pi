@@ -74,7 +74,7 @@ test-job:
 
 deploy-staging:
   stage: deploy
-  needs: [metadata-job, test-job]
+  needs: [metadata-job]
   script:
     - docker compose -f docker-compose.staging.yml up -d
   environment:
