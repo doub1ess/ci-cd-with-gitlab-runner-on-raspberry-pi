@@ -1,0 +1,6 @@
+services:
+  backend:
+    image: ${IMAGE_TAG}
+    ports:
+      - 8080:8000
+    command: "python main.py"
