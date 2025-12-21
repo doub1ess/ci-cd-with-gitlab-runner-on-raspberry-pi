@@ -38,7 +38,7 @@ def root():
             "description": w0.get("description"),
             "icon": w0.get("icon"),
         },
-}
+    }
     # return {
     #     "city": data.get("name", city),
     #     "temp": data.get("main", {}).get("temp"),
