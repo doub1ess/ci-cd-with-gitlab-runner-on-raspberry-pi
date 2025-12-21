@@ -27,8 +27,21 @@ def root():
         raise HTTPException(status_code=502, detail="OpenWeather request failed")
 
     data = r.json()
+    w0 = (data.get("weather") or [{}])[0]  # первый элемент массива weather
+
     return {
         "city": data.get("name", city),
         "temp": data.get("main", {}).get("temp"),
-    }
+        "weather": {
+            "id": w0.get("id"),
+            "main": w0.get("main"),
+            "description": w0.get("description"),
+            "icon": w0.get("icon"),
+        },
+}
+    # return {
+    #     "city": data.get("name", city),
+    #     "temp": data.get("main", {}).get("temp"),
+
+    # }
 
