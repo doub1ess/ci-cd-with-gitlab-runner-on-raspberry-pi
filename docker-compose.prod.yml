@@ -3,4 +3,7 @@ services:
     image: ${IMAGE_TAG}
     ports:
       - 80:8000
+    environment:
+      OPENWEATHER_API_KEY: "${TOKEN}"
+      CITY: "${CITY}"
     command: "python main.py"

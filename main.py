@@ -1,14 +1,34 @@
-from fastapi import FastAPI
-import uvicorn
-
+import os
+import requests
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
-
 @app.get("/")
 def root():
-    return {"msg": "Hello World!"}
+    api_key = os.getenv("OPENWEATHER_API_KEY")
+    city = os.getenv("CITY")
 
+    if not api_key:
+        raise HTTPException(status_code=500, detail="OPENWEATHER_API_KEY is not set")
+    if not city:
+        raise HTTPException(status_code=500, detail="CITY is not set")
 
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000)
+    url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+        "q": city,
+        "appid": api_key,
+        "units": "metric",
+        "lang": "ru",
+    }
+
+    r = requests.get(url, params=params, timeout=10)
+    if r.status_code != 200:
+        raise HTTPException(status_code=502, detail="OpenWeather request failed")
+
+    data = r.json()
+    return {
+        "city": data.get("name", city),
+        "temp": data.get("main", {}).get("temp"),
+    }
+

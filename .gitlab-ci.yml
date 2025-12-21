@@ -2,13 +2,31 @@
 #   rules:
 #     - if: $CI_PIPELINE_SOURCE == "web"
 #       when: always
-#     - when: never  
+#     - when: never
+
+workflow:
+  rules:
+    - changes:
+        - "README.md"
+      when: never
+    - when: always
+
 
 
 stages:
   - build
   - test
   - deploy
+
+
+
+.set-variables-stage:
+  variables:
+    TOKEN: $STAGING_API
+.set-variables-prod:
+  variables:
+    TOKEN: $PROD_API
+
 
 
 variables:
@@ -75,23 +93,28 @@ test-job:
 deploy-staging:
   stage: deploy
   needs: [metadata-job]
+  variables:
+    CITY: "Пермь"
   script:
     - docker compose -f docker-compose.staging.yml up -d
   environment:
     name: staging
     deployment_tier: staging
     url: http://100.94.38.85:8080
-  resource_group: staging environment
+  resource_group: staging-environment
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: on_success
     - if: $CI_COMMIT_BRANCH =~ /^feature\//
       when: manual
+  extends: [.set-variables-stage]
 
 
 deploy-production:
   stage: deploy
   needs: [metadata-job, test-job]
+  variables:
+    CITY: "Москва"
   script:
     - docker compose -f docker-compose.prod.yml up -d
   environment:
@@ -101,4 +124,5 @@ deploy-production:
   resource_group: production-environment
   rules:
     - if: $CI_COMMIT_TAG
+  extends: [.set-variables-prod]
 
